@@ -3,39 +3,48 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Genre;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreGenreRequest;
+use App\Http\Requests\UpdateGenreRequest;
+use App\Http\Resources\GenreResource;
+use App\Services\GenreService;
 
 class GenreController extends Controller
 {
+    public function __construct(
+        private GenreService $genreService
+    ) {}
+
     public function index()
     {
-        return response()->json(Genre::all());
+        $genres = $this->genreService->listAll();
+
+        return GenreResource::collection($genres);
     }
 
-    public function store(Request $request)
+    public function store(StoreGenreRequest $request)
     {
-        $genre = Genre::create($request->all());
+        $genre = $this->genreService->create($request->validated());
 
-        return response()->json($genre, 201);
+        return new GenreResource($genre);
     }
 
     public function show(int $id)
     {
-        return response()->json(Genre::findOrFail($id));
+        $genre = $this->genreService->findById($id);
+
+        return new GenreResource($genre);
     }
 
-    public function update(Request $request, int $id)
+    public function update(UpdateGenreRequest $request, int $id)
     {
-        $genre = Genre::findOrFail($id);
-        $genre->update($request->all());
+        $genre = $this->genreService->update($id, $request->validated());
 
-        return response()->json($genre);
+        return new GenreResource($genre);
     }
 
     public function destroy(int $id)
     {
-        Genre::findOrFail($id)->delete();
+        $this->genreService->delete($id);
 
         return response()->noContent();
     }

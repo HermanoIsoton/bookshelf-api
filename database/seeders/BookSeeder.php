@@ -11,7 +11,11 @@ class BookSeeder extends Seeder
     public function run(): void
     {
         $genreIds = Genre::pluck('id', 'name');
-
+        // genreIds = [
+        //      ['Mistery' -> '4'],
+        //      ['Romance' -> '3']
+        //      ...
+        // ]
         $books = [
             // Fantasy
             ['genre' => 'Fantasy', 'title' => 'The Hobbit', 'author' => 'J.R.R. Tolkien', 'pages' => 310, 'status' => 'finished', 'rating' => 5],
